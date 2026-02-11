@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Task\CreateCommentController;
 use App\Http\Controllers\Api\Task\CreateTaskController;
 use App\Http\Controllers\Api\Task\ListTasksController;
 use App\Http\Controllers\Api\Task\ShowTaskController;
@@ -21,6 +22,7 @@ Route::prefix('v1')->middleware(['auth:api'])->group(function () {
         Route::post('/create', CreateTaskController::class)->name('tasks.create');
         Route::put('/{id}/update', UpdateTaskController::class)->name('tasks.update');
         Route::get('/{id}/show', ShowTaskController::class)->name('tasks.show');
+        Route::post('/{id}/create/comment', CreateCommentController::class)->name('tasks.create-comment');
     });
 
     Route::prefix('task-histories')->group(function () {

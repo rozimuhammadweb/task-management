@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\TaskAssignedUsersChanged;
+use App\Listeners\TaskAssignedUsersHistory;
 use App\Models\Task;
+use App\Models\TaskComment;
+use App\Observers\TaskCommentObserver;
 use App\Observers\TaskObserver;
 use App\Repositories\Contracts\Task\TaskRepositoryInterface;
 use App\Repositories\Contracts\TaskHistory\TaskHistoryRepositoryInterface;
@@ -18,6 +22,7 @@ use App\Services\Contracts\User\UserServiceInterface;
 use App\Services\TaskHistoryService;
 use App\Services\TaskService;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -46,5 +51,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Task::observe(TaskObserver::class);
+        TaskComment::observe(TaskCommentObserver::class);
+        Event::listen(TaskAssignedUsersChanged::class, TaskAssignedUsersHistory::class);
     }
 }

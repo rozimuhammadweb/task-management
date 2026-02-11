@@ -9,7 +9,6 @@ use App\Services\Contracts\BaseServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquen;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class BaseService implements BaseServiceInterface
@@ -38,7 +37,7 @@ abstract class BaseService implements BaseServiceInterface
         return $this->repository->paginate($query, $perPage);
     }
 
-    public function list(array $params = []): Collection
+    public function list(array $params = [])
     {
         $query = $this->repository->query();
         $query = $this->applyRelations($query);
@@ -120,6 +119,7 @@ abstract class BaseService implements BaseServiceInterface
             $type = $config['type'] ?? 'string';
 
             match ($type) {
+                'string_search' => $query->where($key, $value),
                 'string' => $query->where($key, 'ilike', "%{$value}%"),
                 'exact', 'number', 'bool' => $query->where($key, $value),
                 'array' => $query->whereIn($key, $value),

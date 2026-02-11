@@ -11,4 +11,9 @@ class TaskRepository extends BaseRepository implements TaskRepositoryInterface
     {
         parent::__construct($model);
     }
+
+    public function findOrFail(int|string $id): Task
+    {
+        return $this->model->findOrFail($id);
+    }
 }

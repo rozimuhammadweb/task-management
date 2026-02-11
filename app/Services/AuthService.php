@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\RoleEnum;
 use App\Repositories\Contracts\User\UserRepositoryInterface;
 use App\Services\Contracts\Auth\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +20,8 @@ class AuthService extends BaseService implements AuthServiceInterface
     public function register(array $data)
     {
         $user =  $this->userRepository->create($data);
+
+        $user->assignRole(RoleEnum::USER);
 
         $token = JWTAuth::fromUser($user);
 

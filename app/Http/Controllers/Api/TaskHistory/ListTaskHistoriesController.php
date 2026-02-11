@@ -10,6 +10,6 @@ class ListTaskHistoriesController extends BaseController
 {
     public function __invoke(ListTaskHistoriesRequest $request, TaskHistoryServiceInterface $taskService)
     {
-        return $this->successResponse(data: $taskService->list($request->validated()), message: __('task-histories.list.success'));
+        return $this->successResponse(data: $taskService->get($request->validated()), message: __('task-histories.list.success'));
     }
 }

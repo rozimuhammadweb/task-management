@@ -9,13 +9,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaskComment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'task_id',
         'user_id',
         'comment',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->user_id = auth()->id();
+        });
+    }
 
     public function task(): BelongsTo
     {
