@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Task;
 
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,11 +18,7 @@ class TaskCommentResource extends JsonResource
         return [
             'id' => $this->id,
             'comment' => $this->comment,
-            'user' => [
-                'id' => $this->user?->id,
-                'name' => $this->user?->name,
-                'username' => $this->user?->username,
-            ],
+            'user' => new UserResource($this->whenLoaded('user')),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }

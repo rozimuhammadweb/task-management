@@ -16,11 +16,7 @@ class TaskResource extends JsonResource
             'description' => $this->description,
             'status' => $this->status,
             'deadline' => $this->deadline,
-            'creator' => [
-                'id' => $this->creator?->id,
-                'name' => $this->creator?->name,
-                'username' => $this->creator?->username,
-            ],
+            'creator' => new UserResource($this->whenLoaded('creator')),
             'assigned_users' => UserResource::collection(
                 $this->whenLoaded('assignedUsers')
             ),
