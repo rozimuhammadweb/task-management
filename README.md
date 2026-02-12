@@ -2,6 +2,7 @@
 2. make dev-build
 3. make composer-install
 4. make task-setup
+5. Import collection from ./postman/Task Management.postman_collection.json
 
 ## User Seeder
 ## Admin role
