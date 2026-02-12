@@ -10,7 +10,13 @@ interface AuthServiceInterface extends BaseServiceInterface
 
     public function login(array $data);
 
+    public function sendEmailOtp(string $email): bool;
+
+    public function verifyEmailOtp(string $email, string $code): array;
+
     public function logout();
 
     public function refresh();
+
+    public function me();
 }

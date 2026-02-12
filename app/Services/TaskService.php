@@ -35,8 +35,6 @@ class TaskService extends BaseService implements TaskServiceInterface
 
     public function get(array $params, bool $pagination = true): LengthAwarePaginator
     {
-        $perPage = $pagination ? ($params['per_page'] ?? 20) : null;
-
         $query = $this->repository->query();
         $query = $this->applyFilters($query, $params);
         $query = $this->applySelect($query);
@@ -47,7 +45,7 @@ class TaskService extends BaseService implements TaskServiceInterface
             $query->forUser($user->id);
         }
 
-        return $query->paginate($perPage);
+        return $query->paginate($params['per_page'] ?? 20);
     }
 
     public function findWithRelations(int|string $id)
@@ -57,7 +55,7 @@ class TaskService extends BaseService implements TaskServiceInterface
                 'creator',
                 'comments.user',
                 'histories.user',
-            ])->first($id);
+            ])->findOrFail($id);
     }
 
     public function create(array $data)
@@ -65,23 +63,8 @@ class TaskService extends BaseService implements TaskServiceInterface
         $task = $this->repository->create($data);
 
         $oldUsers = [];
-
-        if (!empty($data['assigned_users'])) {
-            $syncData = [];
-
-            foreach ($data['assigned_users'] as $userId) {
-                $syncData[$userId] = [
-                    'assigned_by' => auth()->id(),
-                    'assigned_at' => now(),
-                ];
-            }
-
-            $task->assignedUsers()->sync($syncData);
-        }
-
-        $newUsers = $task->assignedUsers()->pluck('users.id')->toArray();
-
-        event(new TaskAssignedUsersChanged($task, $oldUsers, $newUsers));
+        $newUsers = $this->syncAssignedUsers($task, $data['assigned_users'] ?? []);
+        $this->dispatchAssignedUsersEvent($task, $oldUsers, $newUsers);
 
         return $task;
     }
@@ -91,26 +74,11 @@ class TaskService extends BaseService implements TaskServiceInterface
         $task = $this->repository->findOrFail($id);
 
         $oldUsers = $task->assignedUsers()->pluck('users.id')->toArray();
-
         $task = $this->repository->update($id, $data);
-
-        if (isset($data['assigned_users'])) {
-            $syncData = [];
-
-            foreach ($data['assigned_users'] as $userId) {
-                $syncData[$userId] = [
-                    'assigned_by' => auth()->id(),
-                    'assigned_at' => now(),
-                ];
-            }
-
-            $task->assignedUsers()->sync($syncData);
-        }
-
-        $newUsers = $task->assignedUsers()->pluck('users.id')->toArray();
+        $newUsers = $this->syncAssignedUsers($task, $data['assigned_users'] ?? []);
 
         if ($oldUsers !== $newUsers) {
-            event(new TaskAssignedUsersChanged($task, $oldUsers, $newUsers));
+            $this->dispatchAssignedUsersEvent($task, $oldUsers, $newUsers);
         }
 
         return $task;
@@ -118,7 +86,30 @@ class TaskService extends BaseService implements TaskServiceInterface
 
     public function addComment(int|string $taskId, array $data)
     {
-        $task = $this->repository->find($taskId);
+        $task = $this->repository->findOrFail($taskId);
         return $task->comments()->create($data);
+    }
+
+    private function syncAssignedUsers($task, array $userIds): array
+    {
+        if (empty($userIds)) {
+            return [];
+        }
+
+        $syncData = collect($userIds)->mapWithKeys(fn ($userId) => [
+            $userId => [
+                'assigned_by' => auth()->id(),
+                'assigned_at' => now(),
+            ],
+        ])->toArray();
+
+        $task->assignedUsers()->sync($syncData);
+
+        return $task->assignedUsers()->pluck('users.id')->toArray();
+    }
+
+    private function dispatchAssignedUsersEvent($task, array $oldUsers, array $newUsers): void
+    {
+        event(new TaskAssignedUsersChanged($task, $oldUsers, $newUsers));
     }
 }

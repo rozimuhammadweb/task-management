@@ -9,7 +9,7 @@ class ShowTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('viewTask', Task::findOrFail($this->route('id')));
+        return $this->user()->can('viewTask', Task::findOrFail($this->route('id'))); // TODO refactoring
     }
 
     public function rules(): array

@@ -18,4 +18,11 @@ class LoginUserRequest extends FormRequest
             'password' => 'required|string|min:6',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'login.required' => 'please enter your username or email.',
+        ];
+    }
 }

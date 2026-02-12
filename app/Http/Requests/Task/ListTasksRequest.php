@@ -17,8 +17,9 @@ class ListTasksRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'per_page' => 'integer|min:1|max:100',
+            'title' => 'nullable|string',
             'status' => ['nullable', Rule::in(TaskStatus::values())],
+            'per_page' => 'integer|min:1|max:100',
         ];
     }
 }

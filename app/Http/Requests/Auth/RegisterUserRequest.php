@@ -19,4 +19,5 @@ class RegisterUserRequest extends FormRequest
             'password' => 'required|string|min:6|confirmed',
         ];
     }
+
 }

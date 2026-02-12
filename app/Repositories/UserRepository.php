@@ -12,6 +12,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         parent::__construct($model);
     }
 
+    public function findByEmail(string $email)
+    {
+       return $this->model->where('email', $email)->first();
+    }
+
     public function findByLogin(string $login): ?User
     {
         return $this->model->where('username', $login)->orWhere('email', $login)->first();

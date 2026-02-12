@@ -11,7 +11,7 @@ class CreateCommentController extends BaseController
     public function __invoke(int|string $taskId, CreateCommentRequest $request, TaskServiceInterface $taskService)
     {
        return $this->createdResponse(
-           data: $taskService->addComment($taskId, $request->validated()),
+           data: $taskService->addComment($taskId, $request->validated()), // TODO TaskCommenResource with user task relation.
            message: trans('tasks.create_comment_success')
        );
     }

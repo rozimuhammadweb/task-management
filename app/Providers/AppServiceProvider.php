@@ -52,6 +52,5 @@ class AppServiceProvider extends ServiceProvider
     {
         Task::observe(TaskObserver::class);
         TaskComment::observe(TaskCommentObserver::class);
-        Event::listen(TaskAssignedUsersChanged::class, TaskAssignedUsersHistory::class);
     }
 }

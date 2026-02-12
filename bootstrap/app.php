@@ -15,5 +15,5 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // TODO implement CustomHandler for unauthorized users
     })->create();

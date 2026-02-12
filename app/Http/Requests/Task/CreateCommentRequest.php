@@ -9,7 +9,7 @@ class CreateCommentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return ($task = Task::find($this->route('id'))) && $this->user()->can('createComment', $task);
+        return ($task = Task::find($this->route('id'))) && $this->user()->can('createComment', $task); // TODO refactoring
     }
 
     public function rules(): array

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Task;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\Task\ShowTaskRequest;
 use App\Http\Resources\Task\TaskResource;
-use App\Policies\TaskPolicy;
 use App\Services\Contracts\Task\TaskServiceInterface;
 
 class ShowTaskController extends BaseController
